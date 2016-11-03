@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "ViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +17,41 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    //registerSDKWithAppKey: 注册的AppKey，详细见下面注释。
+    //apnsCertName: 推送证书名（不需要加后缀），详细见下面注释。
+    EMError *error = [[EaseMob sharedInstance] registerSDKWithAppKey:@"1117161031178448#kefuchannelapp30054" apnsCertName:@"kefuchannelapp30054"];
+    if (!error) {
+        NSLog(@"初始化成功");
+    }
+    [[EaseMob sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+    
+    [[EaseMob sharedInstance].chatManager asyncRegisterNewAccount:@"8001" password:@"111111" withCompletion:^(NSString *username, NSString *password, EMError *error) {
+        if (!error) {
+            NSLog(@"注册成功");
+        }
+        else
+        {
+            NSLog(@"%@",error.description);
+        }
+    } onQueue:nil];
+    
+    [[EaseMob sharedInstance].chatManager asyncLoginWithUsername:@"8001" password:@"111111" completion:^(NSDictionary *loginInfo, EMError *error) {
+        if (!error && loginInfo) {
+            NSLog(@"登录成功");
+        }
+        else
+        {
+            NSLog(@"%@",error.description);
+        }
+    } onQueue:nil];
+    
+    ViewController *rootVC = [[ViewController alloc] init];
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+    self.window.rootViewController = rootVC;
+    [self.window makeKeyAndVisible];
+    
+    
     return YES;
 }
 
@@ -27,14 +62,17 @@
 }
 
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+// APP进入后台
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    [[EaseMob sharedInstance] applicationDidEnterBackground:application];
 }
 
 
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+// APP将要从后台返回
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+    [[EaseMob sharedInstance] applicationWillEnterForeground:application];
 }
 
 
@@ -43,8 +81,35 @@
 }
 
 
-- (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+// 申请处理时间
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+    [[EaseMob sharedInstance] applicationWillTerminate:application];
+}
+
+
+/*!
+ @method
+ @brief 将要发起自动重连操作时发送该回调
+ @discussion
+ @result
+ */
+- (void)willAutoReconnect
+{
+    
+}
+
+/*!
+ @method
+ @brief 自动重连操作完成后的回调（成功的话，error为nil，失败的话，查看error的错误信息）
+ @discussion
+ @result
+ */
+- (void)didAutoReconnectFinishedWithError:(NSError *)error
+{
+    if (error) {
+        NSLog(@"%@",error);
+    }
 }
 
 

@@ -1,0 +1,22 @@
+//
+//  header.pch
+//  MyMobileCustomerServiceDemo
+//
+//  Created by 马浩哲 on 16/11/1.
+//  Copyright © 2016年 junanxin. All rights reserved.
+//
+
+#ifndef header_pch
+#define header_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* header_pch */
+
+#ifdef __OBJC__
+
+#import <Foundation/Foundation.h>
+#import "EaseMob.h"
+#import "EaseUI.h"
+#endif
