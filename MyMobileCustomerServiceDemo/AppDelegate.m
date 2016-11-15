@@ -19,7 +19,19 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //registerSDKWithAppKey: 注册的AppKey，详细见下面注释。
     //apnsCertName: 推送证书名（不需要加后缀），详细见下面注释。
-    EMError *error = [[EaseMob sharedInstance] registerSDKWithAppKey:@"1117161031178448#kefuchannelapp30054" apnsCertName:@"kefuchannelapp30054"];
+    EMError *error = [[EaseMob sharedInstance] registerSDKWithAppKey:@"1117161031178448#kefuchannelapp30054" apnsCertName:@"anxindai3"];
+    //初始化SDK
+//    [[EaseSDKHelper shareHelper] easemobApplication:application
+//                      didFinishLaunchingWithOptions:launchOptions
+//                                             appkey:@"1117161031178448#kefuchannelapp30054"
+//                                       apnsCertName:@"kefuchannelapp30054"
+//                                        otherConfig:@{kSDKConfigEnableConsoleLogger:[NSNumber numberWithBool:YES]}];
+    
+    
+    [[EaseMob sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+    
+    
+    
     if (!error) {
         NSLog(@"初始化成功");
     }
@@ -45,10 +57,31 @@
         }
     } onQueue:nil];
     
+    //设置环信离线推送
+    //iOS8 注册APNS
+    if ([application respondsToSelector:@selector(registerForRemoteNotifications)]) {
+        [application registerForRemoteNotifications];
+        UIUserNotificationType notificationTypes = UIUserNotificationTypeBadge |
+        UIUserNotificationTypeSound |
+        UIUserNotificationTypeAlert;
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
+        [application registerUserNotificationSettings:settings];
+    }
+    else{
+        UIRemoteNotificationType notificationTypes = UIRemoteNotificationTypeBadge |
+        UIRemoteNotificationTypeSound |
+        UIRemoteNotificationTypeAlert;
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+    }
+    
+    
     ViewController *rootVC = [[ViewController alloc] init];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:rootVC];
+    nav.navigationBar.barTintColor = [UIColor redColor];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
-    self.window.rootViewController = rootVC;
+    self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     
     
@@ -112,5 +145,15 @@
     }
 }
 
+// 将得到的deviceToken传给SDK
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+    [[EaseMob sharedInstance] application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
+
+// 注册deviceToken失败
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
+    [[EaseMob sharedInstance] application:application didFailToRegisterForRemoteNotificationsWithError:error];
+    NSLog(@"error -- %@",error);
+}
 
 @end

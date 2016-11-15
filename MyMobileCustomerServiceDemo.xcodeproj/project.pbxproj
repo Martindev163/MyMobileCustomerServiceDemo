@@ -121,6 +121,10 @@
 		233712AE1DC991190093DBB2 /* EaseConversationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2337123C1DC991190093DBB2 /* EaseConversationCell.m */; };
 		233712AF1DC991190093DBB2 /* EaseUIResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2337123E1DC991190093DBB2 /* EaseUIResource.bundle */; };
 		233712B21DC9919F0093DBB2 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 233712B11DC9919F0093DBB2 /* ChatViewController.m */; };
+		237FE9621DD417AE001789A2 /* in1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 237FE95E1DD417AE001789A2 /* in1.wav */; };
+		237FE9631DD417AE001789A2 /* in2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 237FE95F1DD417AE001789A2 /* in2.wav */; };
+		237FE9641DD417AE001789A2 /* in3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 237FE9601DD417AE001789A2 /* in3.wav */; };
+		237FE9651DD417AE001789A2 /* in4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 237FE9611DD417AE001789A2 /* in4.wav */; };
 		23B6473E1DC8C185007FD06C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 23B6473D1DC8C185007FD06C /* main.m */; };
 		23B647411DC8C185007FD06C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 23B647401DC8C185007FD06C /* AppDelegate.m */; };
 		23B647441DC8C185007FD06C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 23B647431DC8C185007FD06C /* ViewController.m */; };
@@ -404,6 +408,10 @@
 		2337123E1DC991190093DBB2 /* EaseUIResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = EaseUIResource.bundle; sourceTree = "<group>"; };
 		233712B01DC9919F0093DBB2 /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
 		233712B11DC9919F0093DBB2 /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		237FE95E1DD417AE001789A2 /* in1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = in1.wav; sourceTree = "<group>"; };
+		237FE95F1DD417AE001789A2 /* in2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = in2.wav; sourceTree = "<group>"; };
+		237FE9601DD417AE001789A2 /* in3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = in3.wav; sourceTree = "<group>"; };
+		237FE9611DD417AE001789A2 /* in4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = in4.wav; sourceTree = "<group>"; };
 		23B647391DC8C185007FD06C /* MyMobileCustomerServiceDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMobileCustomerServiceDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23B6473D1DC8C185007FD06C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		23B6473F1DC8C185007FD06C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -1076,6 +1084,17 @@
 			path = resource;
 			sourceTree = "<group>";
 		};
+		237FE95D1DD4174C001789A2 /* others */ = {
+			isa = PBXGroup;
+			children = (
+				237FE95E1DD417AE001789A2 /* in1.wav */,
+				237FE95F1DD417AE001789A2 /* in2.wav */,
+				237FE9601DD417AE001789A2 /* in3.wav */,
+				237FE9611DD417AE001789A2 /* in4.wav */,
+			);
+			path = others;
+			sourceTree = "<group>";
+		};
 		23B647301DC8C185007FD06C = {
 			isa = PBXGroup;
 			children = (
@@ -1100,6 +1119,7 @@
 		23B6473B1DC8C185007FD06C /* MyMobileCustomerServiceDemo */ = {
 			isa = PBXGroup;
 			children = (
+				237FE95D1DD4174C001789A2 /* others */,
 				233711291DC991190093DBB2 /* EaseUI */,
 				23B6476F1DC8C1AC007FD06C /* EaseMobSDKLite */,
 				23B6473F1DC8C185007FD06C /* AppDelegate.h */,
@@ -1496,7 +1516,13 @@
 				TargetAttributes = {
 					23B647381DC8C185007FD06C = {
 						CreatedOnToolsVersion = 8.0;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = AJ4C425GWY;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					23B647511DC8C185007FD06C = {
 						CreatedOnToolsVersion = 8.0;
@@ -1536,9 +1562,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				23B6474C1DC8C185007FD06C /* LaunchScreen.storyboard in Resources */,
+				237FE9621DD417AE001789A2 /* in1.wav in Resources */,
+				237FE9651DD417AE001789A2 /* in4.wav in Resources */,
 				233712AF1DC991190093DBB2 /* EaseUIResource.bundle in Resources */,
 				23B647491DC8C185007FD06C /* Assets.xcassets in Resources */,
+				237FE9631DD417AE001789A2 /* in2.wav in Resources */,
 				23B647DE1DC8C1AC007FD06C /* EaseMob.bundle in Resources */,
+				237FE9641DD417AE001789A2 /* in3.wav in Resources */,
 				23B647471DC8C185007FD06C /* Main.storyboard in Resources */,
 				2337127F1DC991190093DBB2 /* MWPhotoBrowser.bundle in Resources */,
 			);
@@ -1826,8 +1856,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: lifeng weng (NX97YVCB3D)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: lifeng weng (NX97YVCB3D)";
+				DEVELOPMENT_TEAM = AJ4C425GWY;
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = /Users/mahaozhe/Desktop/demo/MyMobileCustomerServiceDemo/MyMobileCustomerServiceDemo/header.pch;
 				INFOPLIST_FILE = MyMobileCustomerServiceDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1836,8 +1871,11 @@
 					"$(PROJECT_DIR)/MyMobileCustomerServiceDemo/EaseUI/EMUIKit/3rdparty/DeviceHelper/VoiceConvert/opencore-amrwb",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.junanxin.MyMobileCustomerServiceDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.anxin.anxindai4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "3800d811-28a0-4498-9c09-cf7e34580b21";
+				PROVISIONING_PROFILE_SPECIFIER = "AnXinDaiTest-4";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
@@ -1845,8 +1883,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: lifeng weng (NX97YVCB3D)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: lifeng weng (NX97YVCB3D)";
+				DEVELOPMENT_TEAM = AJ4C425GWY;
+				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = /Users/mahaozhe/Desktop/demo/MyMobileCustomerServiceDemo/MyMobileCustomerServiceDemo/header.pch;
 				INFOPLIST_FILE = MyMobileCustomerServiceDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1855,8 +1898,11 @@
 					"$(PROJECT_DIR)/MyMobileCustomerServiceDemo/EaseUI/EMUIKit/3rdparty/DeviceHelper/VoiceConvert/opencore-amrwb",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.junanxin.MyMobileCustomerServiceDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.anxin.anxindai4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "3800d811-28a0-4498-9c09-cf7e34580b21";
+				PROVISIONING_PROFILE_SPECIFIER = "AnXinDaiTest-4";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};

@@ -8,6 +8,6 @@
 
 #import "EaseMessageViewController.h"
 
-@interface ChatViewController : EaseMessageViewController
+@interface ChatViewController : EaseMessageViewController<EaseMessageViewControllerDelegate,EaseMessageViewControllerDataSource>
 
 @end

@@ -35,7 +35,7 @@
 - (void)unregisterEaseMobNotification
 {
     [[EaseMob sharedInstance].chatManager removeDelegate:self];
-    [[EaseMob sharedInstance].callManager removeDelegate:self];
+//    [[EaseMob sharedInstance].callManager removeDelegate:self];
 }
 
 @end

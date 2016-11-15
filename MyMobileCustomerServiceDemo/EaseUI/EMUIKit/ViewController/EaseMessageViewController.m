@@ -317,11 +317,11 @@
     }
     
     if (_deleteMenuItem == nil) {
-        _deleteMenuItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"delete", @"Delete") action:@selector(deleteMenuAction:)];
+        _deleteMenuItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"删除", @"删除") action:@selector(deleteMenuAction:)];
     }
     
     if (_copyMenuItem == nil) {
-        _copyMenuItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"copy", @"Copy") action:@selector(copyMenuAction:)];
+        _copyMenuItem = [[UIMenuItem alloc] initWithTitle:NSLocalizedString(@"拷贝", @"拷贝") action:@selector(copyMenuAction:)];
     }
     
     if (messageType == eMessageBodyType_Text) {
@@ -1218,7 +1218,9 @@
     [self showHint:NSLocalizedString(@"message.simulatorNotSupportCamera", @"simulator does not support taking picture")];
 #elif TARGET_OS_IPHONE
     self.imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    self.imagePicker.mediaTypes = @[(NSString *)kUTTypeImage,(NSString *)kUTTypeMovie];
+//    self.imagePicker.mediaTypes = @[(NSString *)kUTTypeImage,(NSString *)kUTTypeMovie];
+    //控制使用相机的哪些功能
+    self.imagePicker.mediaTypes = @[(NSString *)kUTTypeImage];
     [self presentViewController:self.imagePicker animated:YES completion:NULL];
     
     self.isViewDidAppear = NO;
@@ -1620,7 +1622,7 @@
                 timeStr = [_dataSource messageViewController:self stringForDate:messageDate];
             }
             else{
-                timeStr = [messageDate formattedTime];
+                timeStr = [messageDate minuteDescription];
             }
             [formattedArray addObject:timeStr];
             self.messageTimeIntervalTag = message.timestamp;

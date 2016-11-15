@@ -8,20 +8,31 @@
 
 #import "ViewController.h"
 #import "ChatViewController.h"
-
+#import "EaseMob.h"
 #define kDeviceWidth [[UIScreen mainScreen] bounds].size.width
 #define kDeviceHeight [[UIScreen mainScreen] bounds].size.height
-
+static const CGFloat kDefaultPlaySoundInterval = 3.0;
 @interface ViewController ()<IChatManagerDelegate,UITextFieldDelegate>
 
 @property (nonatomic, strong) UITextField *messageField;
 
+@property (strong, nonatomic) NSDate *lastPlaySoundDate;
+
+@property (nonatomic, strong) UIButton *rightBtn;
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.title = @"首页";
+    
+    _rightBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    [_rightBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_rightBtn setTitle:@"标记" forState:UIControlStateNormal];
+    UIBarButtonItem *rigtItem = [[UIBarButtonItem alloc] initWithCustomView:_rightBtn];
+    [self.navigationItem setRightBarButtonItem:rigtItem];
     
     UIButton *registerBtn = [[UIButton alloc] initWithFrame:CGRectMake((kDeviceWidth-150)/2.0, 100, 150, 40)];
     registerBtn.backgroundColor = [UIColor redColor];
@@ -63,7 +74,117 @@
     [self.view addSubview:turnToServiceBtn];
     
 //    [[EaseMob sharedInstance].chatManager addDelegate:self delegateQueue:nil];
+    
+    [self registerNotifications];
 }
+
+#pragma mark - private
+
+-(void)registerNotifications
+{
+    [self unregisterNotifications];
+    
+    [[EaseMob sharedInstance].chatManager addDelegate:self delegateQueue:nil];
+}
+
+-(void)unregisterNotifications
+{
+    [[EaseMob sharedInstance].chatManager removeDelegate:self];
+}
+
+
+// 收到消息回调
+-(void)didReceiveMessage:(EMMessage *)message
+{
+#if !TARGET_IPHONE_SIMULATOR
+    BOOL isAppActivity = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
+    if (!isAppActivity) {
+        [self _showNotificationWithMessage:message];
+    }else {
+        [self _playSoundAndVibration];
+    }
+#endif
+}
+
+#pragma mark - private chat
+
+- (void)_playSoundAndVibration
+{
+    NSTimeInterval timeInterval = [[NSDate date]
+                                   timeIntervalSinceDate:self.lastPlaySoundDate];
+    if (timeInterval < kDefaultPlaySoundInterval) {
+        //如果距离上次响铃和震动时间太短, 则跳过响铃
+        NSLog(@"skip ringing & vibration %@, %@", [NSDate date], self.lastPlaySoundDate);
+        return;
+    }
+    
+    //保存最后一次响铃时间
+    self.lastPlaySoundDate = [NSDate date];
+    
+    // 收到消息时，播放音频
+    [[EMCDDeviceManager sharedInstance] playNewMessageSound];
+    // 收到消息时，震动
+    [[EMCDDeviceManager sharedInstance] playVibration];
+}
+
+- (void)_showNotificationWithMessage:(EMMessage *)message
+{
+    EMPushNotificationOptions *options = [[EaseMob sharedInstance].chatManager pushNotificationOptions];
+    //发送本地推送
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [NSDate date]; //触发通知的时间
+    
+    if (options.displayStyle == ePushNotificationDisplayStyle_messageSummary) {
+        id<IEMMessageBody> messageBody = [message.messageBodies firstObject];
+        NSString *messageStr = nil;
+        switch (messageBody.messageBodyType) {
+            case eMessageBodyType_Text:
+            {
+                messageStr = ((EMTextMessageBody *)messageBody).text;
+            }
+                break;
+            case eMessageBodyType_Image:
+            {
+                messageStr = NSLocalizedString(@"message.image", @"Image");
+            }
+                break;
+            case eMessageBodyType_Location:
+            {
+                messageStr = NSLocalizedString(@"message.location", @"Location");
+            }
+                break;
+            case eMessageBodyType_Voice:
+            {
+                messageStr = NSLocalizedString(@"message.voice", @"Voice");
+            }
+                break;
+            case eMessageBodyType_Video:{
+                messageStr = NSLocalizedString(@"message.vidio", @"Vidio");
+            }
+                break;
+            default:
+                break;
+        }
+        
+        NSString *title = message.from;
+        notification.alertBody = [NSString stringWithFormat:@"%@:%@", title, messageStr];
+    }
+    else{
+        notification.alertBody = NSLocalizedString(@"receiveMessage", @"you have a new message");
+    }
+    
+#warning 去掉注释会显示[本地]开头, 方便在开发中区分是否为本地推送
+    //notification.alertBody = [[NSString alloc] initWithFormat:@"[本地]%@", notification.alertBody];
+    
+    notification.alertAction = NSLocalizedString(@"open", @"Open");
+    notification.timeZone = [NSTimeZone defaultTimeZone];
+    notification.soundName = UILocalNotificationDefaultSoundName;
+    //发送通知
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+}
+
+
+
 
 -(void)dealloc
 {
@@ -118,7 +239,9 @@
 {
     ChatViewController *chatVC = [[ChatViewController alloc] initWithConversationChatter:@"kefuchannelimid_414792" conversationType:eConversationTypeChat];
     
-    [self presentViewController:chatVC animated:YES completion:nil];
+//    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:chatVC];
+    
+    [self.navigationController pushViewController:chatVC animated:YES];
 }
 
 #pragma mark - 发送信息
@@ -165,6 +288,40 @@
 - (void)didLoginFromOtherDevice
 {
     NSLog(@"在其他设备登录");
+}
+
+
+#pragma mark - 未读消息数量变化回调
+-(void)didUnreadMessagesCountChanged
+{
+        [self setupUnreadMessageCount];
+}
+#pragma mark - 离线非透传消息接收完成的回调
+- (void)didFinishedReceiveOfflineMessages:(NSArray *)offlineMessages
+{
+        [self setupUnreadMessageCount];
+}
+
+#pragma mark - 统计未读消息数
+-(void)setupUnreadMessageCount
+{
+    NSArray *conversations = [[[EaseMob sharedInstance] chatManager] conversations];
+    NSInteger unreadCount = 0;
+    for (EMConversation *conversation in conversations) {
+        unreadCount += conversation.unreadMessagesCount;
+    }
+    
+    if (unreadCount > 0) {
+        [_rightBtn setTitle:[NSString stringWithFormat:@"%i",unreadCount] forState:UIControlStateNormal];
+    }
+    else
+    {
+        [_rightBtn setTitle:[NSString stringWithFormat:@"标记",unreadCount] forState:UIControlStateNormal];
+    }
+    
+    
+    UIApplication *application = [UIApplication sharedApplication];
+    [application setApplicationIconBadgeNumber:unreadCount];
 }
 
 #pragma mark - 在线接收信息
