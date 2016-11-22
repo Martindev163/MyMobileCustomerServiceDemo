@@ -8,9 +8,13 @@
 
 #import "ChatViewController.h"
 #import "MJRefresh.h"
+#import "IMessageModel.h"
+#import "CustomEvaluateTabCell.h"
+#import "SatisfactionViewController.h"
+
 //#import "Emoji.h"
 
-@interface ChatViewController ()
+@interface ChatViewController ()<CustomEvaluateTabCellDelegate>
 
 @property (strong, nonatomic) EMConversation *conversation;//会话管理者
 
@@ -21,6 +25,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    self.title = @"客服";
     
     [[EaseBaseMessageCell appearance] setSendBubbleBackgroundImage:[[UIImage imageNamed:@"chat_sender"] stretchableImageWithLeftCapWidth:5 topCapHeight:5]];
     [[EaseBaseMessageCell appearance] setRecvBubbleBackgroundImage:[[UIImage imageNamed:@"chat_receiver"] stretchableImageWithLeftCapWidth:35 topCapHeight:35]];
@@ -47,7 +53,6 @@
     
     //刷新消息
     [self tableViewDidTriggerHeaderRefresh];
-    [EMMessage ]
 }
 
 
@@ -213,6 +218,70 @@
 - (void)didUnreadMessagesCountChanged
 {
 //    [self tableViewDidTriggerHeaderRefresh];
+}
+
+-(UITableViewCell *)messageViewController:(UITableView *)tableView cellForMessageModel:(id<IMessageModel>)messageModel
+{
+    
+    if ([self isSatisfactionMessage:messageModel.message]) {
+        
+        static NSString *cellId = @"myCellId";
+        CustomEvaluateTabCell *Mycell = [tableView dequeueReusableCellWithIdentifier:cellId];
+        if (Mycell == nil) {
+            Mycell = [[CustomEvaluateTabCell alloc] initWithStyle:UITableViewCellFocusStyleDefault reuseIdentifier:cellId];
+        }
+        Mycell.delegate = self;
+        Mycell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return Mycell;
+        
+//        UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"customCell"];
+//        cell.textLabel.text = @"立即评价";
+//        return cell;
+    }
+    else
+    {
+        NSString *CellIdentifier = [EaseMessageCell cellIdentifierWithModel:messageModel];
+        
+        EaseBaseMessageCell *sendCell = (EaseBaseMessageCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        
+        // Configure the cell...
+        if (sendCell == nil) {
+            sendCell = [[EaseBaseMessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier model:messageModel];
+            sendCell.selectionStyle = UITableViewCellSelectionStyleNone;
+            sendCell.delegate = self;
+        }
+        
+        sendCell.model = messageModel;
+        
+        return sendCell;
+    }
+    
+    
+}
+
+- (BOOL)isSatisfactionMessage:(EMMessage*)message
+{
+    NSDictionary *userInfo = [[EaseMob sharedInstance].chatManager loginInfo];
+    NSString *login = [userInfo objectForKey:kSDKUsername];
+    BOOL isSender = [login isEqualToString:message.from] ? YES : NO;
+    if ([message.ext objectForKey:kMesssageExtWeChat] && !isSender) {
+        NSDictionary *dic = [message.ext objectForKey:kMesssageExtWeChat];
+        if ([dic objectForKey:kMesssageExtWeChat_ctrlType] &&
+            [dic objectForKey:kMesssageExtWeChat_ctrlType] != [NSNull null] &&
+            [[dic objectForKey:kMesssageExtWeChat_ctrlType] isEqualToString:kMesssageExtWeChat_ctrlType_inviteEnquiry]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+#pragma mark - 评价代理方法
+-(void)ImmediateEvaluationAction
+{
+    NSLog(@"立即评价");
+    
+    SatisfactionViewController *vc = [[SatisfactionViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 /*
